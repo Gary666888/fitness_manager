@@ -270,15 +270,15 @@ export default {
   },
   methods:{
     getUserTotal(){
-      this.axios.post("/users/getCount")
+      this.axios.post("/count")
       .then(res=>{
         console.log(res.data);
         if(res.data.code=='200');
-        this.userTotal = res.data.data.user+res.data.data.teacher+res.data.data.manager;
+        this.userTotal = res.data.data.managerCount+res.data.data.teacherCount+res.data.data.managerCount;
         this.userNum = [
-          { value: res.data.data.user||0, name: "普通用户" },
-          { value: res.data.data.teacher||0, name: "教练" },
-          { value: res.data.data.manager||0, name: "管理员" },
+          { value: res.data.data.managerCount||0, name: "普通用户" },
+          { value: res.data.data.teacherCount||0, name: "教练" },
+          { value: res.data.data.managerCount||0, name: "管理员" },
         ];
         this.userOption = {
           tooltip: {

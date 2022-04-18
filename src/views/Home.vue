@@ -38,31 +38,51 @@
 
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-s-order"></i>
+              <i class="el-icon-user-solid"></i>
               <span slot="title">教练管理</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="/home/teacher">教练档案</el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <!-- <el-menu-item-group>
               <el-menu-item index="/home/orderTeacher">教练预约</el-menu-item>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
           </el-submenu>
 
           <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-s-order"></i>
+              <i class="el-icon-s-flag"></i>
               <span slot="title">场地管理</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="/home/place">场地档案</el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <!-- <el-menu-item-group>
               <el-menu-item index="/home/orderPlace">场地预约</el-menu-item>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
           </el-submenu>
 
           <el-submenu index="4">
+            <template slot="title">
+              <i class="el-icon-s-check"></i>
+              <span slot="title">器材管理</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/home/equipment">器材档案</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+          <el-submenu index="5">
+            <template slot="title">
+              <i class="el-icon-s-check"></i>
+              <span slot="title">会员卡管理</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="/home/equipment">会员卡档案</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+          <el-submenu index="6">
             <template slot="title">
               <i class="el-icon-s-data"></i>
               <span slot="title">平台管理</span>
@@ -71,15 +91,15 @@
               <el-menu-item index="/home/vip">用户管理</el-menu-item>
             </el-menu-item-group>
             
-            <el-menu-item-group v-show="user.role=='超级管理员'">
+            <el-menu-item-group>
               <el-menu-item index="/home/role">角色档案</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
               <el-menu-item index="/home/notice">公告管理</el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <!-- <el-menu-item-group>
               <el-menu-item index="/home/suggest">意见反馈</el-menu-item>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
           </el-submenu>
 
         </el-menu>

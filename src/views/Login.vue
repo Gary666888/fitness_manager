@@ -17,7 +17,7 @@
   </div>
 </template>
 <script>
-import crypto from 'crypto'
+// import crypto from 'crypto'
 export default {
   name: "Login",
   data(){
@@ -29,15 +29,15 @@ export default {
   methods: {
     login(){
       console.log("你点击了登录",this.username,this.password);
-      const md5 = crypto.createHash("md5"); // md5 加密，不可逆加密
-      const newPass = md5.update(this.password).digest("hex"); // 加密
-      console.log(newPass);
+      // const md5 = crypto.createHash("md5"); // md5 加密，不可逆加密
+      // const newPass = md5.update(this.password).digest("hex"); // 加密
+      // console.log(newPass);
 
       // *********************登录******************************
 
-      this.axios.post("/users/managerLogin", {
-        tel: this.username,
-        pwd: newPass
+      this.axios.post("/manager/managerLogin", {
+        uTel: this.username,
+        uPwd: this.password
       })
       .then((res) => {
         console.log(res)

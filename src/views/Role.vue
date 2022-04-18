@@ -43,6 +43,7 @@
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="mini" class="btn-del" @click="del(scope.row.uid)" title="删除"></el-button>
               <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock=='禁用'"></el-button>
               <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="scope.row.lock!='禁用'"></el-button>
             </template>

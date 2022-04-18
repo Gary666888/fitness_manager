@@ -148,6 +148,14 @@ const routes = [
         }
       },
       {
+        path:'equipment',
+        name:'Equipment',
+        component:() => import('../views/Equipment.vue'),
+        meta: {
+          auth: true
+        }
+      },
+      {
         path:'place',
         name:'Place',
         component:() => import('../views/Place.vue'),

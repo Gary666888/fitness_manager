@@ -174,15 +174,15 @@ export default {
     load(){
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/vip/getData",{
-        currentPage: this.currentPage,
-        pageSize: this.pageSize,
+      this.axios.post("/user/getUsers",{
+        page: this.currentPage,
+        limit: this.pageSize,
         name: this.search.name,
         tel: this.search.tel
       })
       .then(res => {
         console.log("获取到数据",res.data.data);
-        this.data=this.fomateData(res.data.data.list)
+        this.data=this.fomateData(res.data.data.pageRecode)
         this.total = res.data.data.count;
         this.loading = false;
       })
