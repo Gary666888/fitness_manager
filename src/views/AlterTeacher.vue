@@ -51,19 +51,13 @@
         <el-date-picker type="date" value-format="yyyy-MM-dd" class="time-input" placeholder="选择日期" v-model="form.birth"></el-date-picker>
       </el-form-item>
 
-      <el-form-item label="预约价格:" prop="price"
-      :rules="{ required: true, message: '预约价格不能为空', trigger: ['blur','change']}">
-        <el-input v-model="form.price" placeholder="请输入预约价格" autocomplete="off"></el-input>
-      </el-form-item>
-
-
       <el-form-item label="描述:" prop="info" >
         <el-input v-model="form.info" placeholder="请输入个人描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
       </el-form-item>
 
       <el-form-item class="control">
         <el-button type="danger" icon="el-icon-close" @click="back">取消</el-button>
-        <el-button @click="resetForm()" class="reset-btn" icon="el-icon-refresh-left">重置</el-button>
+        <el-button @click="resetForm('ruleForm')" class="reset-btn" icon="el-icon-refresh-left">重置</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')" icon="el-icon-document-add">保存</el-button>
       </el-form-item>
 
@@ -95,7 +89,7 @@
       }
     },
     methods: {
-      //返回房产信息列表
+      //返回
       back(){
         this.$router.push({path:'/home/teacher'});
       },
@@ -165,21 +159,14 @@
       // 格式化数据
       formateData(item){
         var data={};
-        data.id=item.t_id;
-        data.uid=item.u_id;
-        data.no=this.PrefixInteger(item.t_id,10);
-        data.img = item.t_img?item.t_img:'/img/avator.jpg';
-        data.name = item.t_name;
-        data.price = item.t_price;
-        data.tel = item.u_tel;
-        data.birth = item.t_birth?this.switchTimeFormat(item.t_birth):'';
-        data.sex = item.t_sex?'女':'男';
-        data.info = item.t_info?item.t_info:"";
-        this.value = item.t_rate;
-        if(item.v_state){
-          data.time = this.switchTimeFormat(item.v_startTime)+' 至 '+this.switchTimeFormat(item.v_endTime)
-        }
-        console.log(data);
+        data.id=item.tId;
+        data.no=this.PrefixInteger(item.tId,10);
+        data.img = item.tImg?item.tImg:'/img/avator.jpg';
+        data.name = item.tName;
+        data.tel = item.tTel;
+        data.birth = item.tBirth?this.switchTimeFormat(item.tBirth):'';
+        data.sex = item.tSex?'女':'男';
+        data.info = item.tInfo?item.tInfo:"";
     
         return data;
       },
@@ -195,42 +182,24 @@
               type: "warning"
             })
             .then(()=>{
-              console.log("seccess!",this.form);
-              this.axios.post('/users/findTel',{
-                tel:this.form.tel,
-                role:2,
-                id:this.form.uid
+              this.axios.post("/teacher/updateTeacher",{
+                tTel:this.form.tel,
+                tName:this.form.name,
+                tSex:this.form.sex=='女'?1:0,
+                tBirth:this.form.birth,
+                tInfo:this.form.info,
+                tImg:this.form.img,
+                tId:this.form.id
               })
-              .then(res=> {
-                console.log(res.data);
-                if(res.data.code == 0){
-                  this.$message.error(res.data.msg);
-                }
-                else{
-                  this.axios.post("/teacher/alter",{
-                    tel:this.form.tel,
-                    name:this.form.name,
-                    sex:this.form.sex,
-                    birth:this.form.birth,
-                    info:this.form.info,
-                    img:this.form.img,
-                    id:this.form.id,
-                    price:this.form.price
-                  })
-                  .then(res=>{
-                    console.log(res);
-                    if(res.data.code=='200'){
-                      this.$message.success(res.data.msg);
-                      this.$router.push({path:'/home/teacher'});
-                    }
-                  })
-                  .catch(err=>{
-                    console.log(err);
-                  })
+              .then(res=>{
+                console.log(res);
+                if(res.data.code=='200'){
+                  this.$message.success(res.data.msg);
+                  this.$router.push({path:'/home/teacher'});
                 }
               })
               .catch(err=>{
-                console.log(err)
+                console.log(err);
               })
               
             })
@@ -247,15 +216,15 @@
       },
 
       // 重置表单
-      resetForm() {
-        this.form=this.formateData(this.data);
+      resetForm(formName) {
+        this.form.img="";
+        this.$refs[formName].resetFields();
       },
 
     },
     mounted() {//创建时获取数据
-    console.log(this.$route.params.id);
-    this.axios.post("/teacher/getDetail", {
-      id:this.$route.params.id
+    this.axios.post("/teacher/queryTeacher", {
+      tId:this.$route.params.id
     })
     .then((res) => {
       console.log(res);

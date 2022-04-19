@@ -19,7 +19,7 @@
       <div class="btn" style="text-align:right;margin-right:30px;margin-top:30px">
         <!-- <el-button icon="el-icon-upload" class="btn-exclude" @click="exclude">导出报表</el-button> -->
         <el-button icon="el-icon-plus" class="btn-add" @click="add">新增</el-button>
-        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜素</el-button>
+        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜索</el-button>
       </div>
 
       <!-- 表格数据 -->
@@ -27,12 +27,11 @@
         <el-table :data="data" border style="width: 100%" v-loading="loading">
           <el-table-column prop="no" label="场地编号"></el-table-column>
           <el-table-column prop="name" label="场地名称"></el-table-column>
-          <el-table-column prop="price" label="预约价格"></el-table-column>
           <el-table-column prop="info" label="场地描述"></el-table-column>
           <!-- 相关操作按钮 -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-              <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.$index)" title="查看详情"></el-button>
+              <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.row.id)" title="查看详情"></el-button>
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
               <el-button type="danger" icon="el-icon-delete" size="mini" class="btn-del" @click="del(scope.row.id)" title="删除"></el-button>
             </template>
@@ -48,12 +47,8 @@
         <div class="img">
           <img :src="this.detail.img" alt="">
         </div>
-        <div class="name">{{detail.name}} ￥{{detail.price}}</div>
-        <div class="info">描述：{{detail.content}}</div>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="cancel('form')">取 消</el-button>
-          <el-button type="primary" @click="submit('form')">确 定</el-button>
-        </div>
+        <div class="name">{{detail.name}}</div>
+        <div class="info">描述：{{detail.info}}</div>
       </el-dialog>
 
       
@@ -84,11 +79,27 @@ export default {
     add(){
        this.$router.push({path:'/home/addPlace'});
     },
-    show(index){
-      this.detail=this.data[index];
-      console.log(this.detail);
-      this.dialog=true;
-      this.title='查看详情'
+    show(id){
+      this.axios.post('/place/queryPlace',{
+        pId:id
+      })
+      .then(res=>{
+        if(res.data.code=='200'){
+          this.detail=this.formateData(res.data.data)
+          this.title='查看详情'
+          this.dialog = true
+        }
+      });
+      
+    },
+    // 格式化数据
+    formateData(item){
+      var data={};
+      data.img=item.pImg;
+      data.id=item.pId;
+      data.name = item.pName;
+      data.info = item.pInfo?item.pInfo:'暂无';
+      return data;
     },
     //修改
     alter(id){
@@ -113,14 +124,14 @@ export default {
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.img=this.$store.state.ip+list[i].p_img;
-          item.id=list[i].p_id;
-          item.price = list[i].p_price;
-          item.no=this.PrefixInteger(list[i].p_id,10);
-          item.name = list[i].p_name;
-          item.content = list[i].p_info?list[i].p_info:'暂无';
+          item.img=this.$store.state.ip+list[i].pimg;
+          item.id=list[i].pid;
+          item.no=this.PrefixInteger(list[i].pid,10);
+          item.name = list[i].pname;
+          item.content = list[i].pinfo?list[i].pinfo:'暂无';
           item.info = item.content.length<15?item.content:item.content.substring(0,15)+'......'
           arr.push(item);
+          console.log(item.no)
         }
       }
       return arr;
@@ -130,15 +141,14 @@ export default {
     load(){
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/place/getData",{
-        currentPage: this.currentPage,
-        pageSize: this.pageSize,
-        name:this.search.name
+      this.axios.post("/place/getPlace",{
+        page: this.currentPage,
+        limit: this.pageSize,
+        name: this.search.name
       })
       .then(res => {
-        console.log("获取到数据",res.data.data);
-        this.data=this.fomateData(res.data.data.list)
-        this.total = res.data.data.count;
+        this.data=this.fomateData(res.data.data.pageRecode)
+        this.total = res.data.data.totalPage;
         this.loading = false;
       })
       .catch(err => {
@@ -146,16 +156,15 @@ export default {
       });
     },
 
-    // 禁用和解除
+    // 删除场地
     del(id){
-      console.log("当前状态",id);
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作将永久删除该场地, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.post('/place/del',{
-          id:id
+        this.axios.post('/place/deletePlace',{
+          pId:id
         })
         .then(res=>{
           if(res.data.code=='200'){
@@ -222,7 +231,8 @@ export default {
       })
     },
     close(){
-      this.$refs['form'].resetFields();
+      this.detail = {}
+      this.title = ''
     }
 
   },

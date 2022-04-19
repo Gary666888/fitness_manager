@@ -51,12 +51,6 @@
         <el-date-picker type="date" value-format="yyyy-MM-dd" class="time-input" placeholder="选择日期" v-model="form.birth"></el-date-picker>
       </el-form-item>
 
-      <el-form-item label="预约价格:" prop="price"
-      :rules="{ required: true, message: '预约价格不能为空', trigger: ['blur','change']}">
-        <el-input v-model="form.price" placeholder="请输入预约价格" autocomplete="off"></el-input>
-      </el-form-item>
-
-
       <el-form-item label="描述:" prop="info" >
         <el-input v-model="form.info" placeholder="请输入个人描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
       </el-form-item>
@@ -103,7 +97,7 @@
       }
     },
     methods: {
-      //返回房产信息列表
+      //返回
       back(){
         this.$router.push({path:'/home/teacher'});
       },
@@ -160,44 +154,25 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log("seccess!",this.form);
-            this.axios.post('/users/findTel',{
-              tel:this.form.tel,
-              role:1
+            this.axios.post("/teacher/addTeacher",{
+              tTel:this.form.tel,
+              tName:this.form.name,
+              tSex:this.form.sex == '女' ? 1 : 0,
+              tBirth:this.form.birth,
+              tInfo:this.form.info,
+              tImg:this.form.img,
             })
-            .then(res=> {
-              console.log(res.data);
-              if(res.data.code == 0){
-                this.$message.error(res.data.msg);
-              }
-              else{
-                this.axios.post("/teacher/add",{
-                  tel:this.form.tel,
-                  name:this.form.name,
-                  sex:this.form.sex,
-                  birth:this.form.birth,
-                  info:this.form.info,
-                  img:this.form.img,
-                  price:this.form.price
-                })
-                .then(res=>{
-                  console.log(res);
-                  if(res.data.code=='200'){
-                    this.$message.success(res.data.msg);
-                    this.$router.push({path:'/home/teacher'});
-                  }
-                })
-                .catch(err=>{
-                  console.log(err);
-                })
+            .then(res=>{
+              if(res.data.code=='200'){
+                this.$message.success(res.data.msg);
+                this.$router.push({path:'/home/teacher'});
               }
             })
             .catch(err=>{
-              console.log(err)
+              console.log(err);
             })
-            
           } else {
-            console.log('error submit!!');
+            console.log('注册失败，请重试!');
             return false;
           }
         });

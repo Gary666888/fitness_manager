@@ -40,15 +40,6 @@
         <el-row :gutter="10">
           <el-col :xs="24" :sm="6" :md="3" :lg="3" ><div class="item-title">生日:</div></el-col>
           <el-col :xs="24" :sm="18" :md="9" :lg="9" ><div class="msg">{{data.birth}}</div></el-col>
-          <el-col :xs="24" :sm="6" :md="3" :lg="3" ><div class="item-title">评分</div></el-col>
-          <el-col :xs="24" :sm="18" :md="9" :lg="9" ><div class="msg">
-            <el-rate v-model="value" disabled show-score text-color="#ff9900" class="rate">
-            </el-rate>
-          </div></el-col>
-        </el-row>
-        <el-row :gutter="10">
-          <el-col :xs="24" :sm="6" :md="3" :lg="3" ><div class="item-title">预约价格:</div></el-col>
-          <el-col :xs="24" :sm="18" :md="9" :lg="9" ><div class="msg">{{data.price}}</div></el-col>
           <el-col :xs="24" :sm="6" :md="3" :lg="3" ><div class="item-title">个人描述:</div></el-col>
           <el-col :xs="24" :sm="18" :md="9" :lg="9" ><div class="msg">{{data.info}}</div></el-col>
         </el-row>
@@ -129,20 +120,15 @@ export default {
     // 格式化数据
     formateData(item){
       var data={};
-      data.id=item.t_id;
-      data.no=this.PrefixInteger(item.t_id,10);
-      data.img = item.t_img?this.$store.state.ip+item.t_img:'/img/avator.jpg';
-      data.name = item.t_name;
-      data.tel = item.u_tel;
-      data.birth = item.t_birth?this.switchTimeFormat(item.t_birth):'待完善';
-      data.age =  item.t_birth?this.GetAge(data.birth):'待完善';
-      data.sex = item.t_sex?'女':'男';
-      data.price = item.t_price
+      data.id=item.tId;
+      data.no=this.PrefixInteger(item.tId,10);
+      data.img = item.tImg?this.$store.state.ip+item.tImg:'/img/avator.jpg';
+      data.name = item.tName;
+      data.tel = item.tTel;
+      data.birth = item.tBirth?this.switchTimeFormat(item.tBirth):'待完善';
+      data.age =  item.tBirth?this.GetAge(data.birth):'待完善';
+      data.sex = item.tSex?'女':'男';
       data.info = item.t_info?item.t_info:"待完善";
-      this.value = item.t_rate;
-      if(item.v_state){
-        data.time = this.switchTimeFormat(item.v_startTime)+' 至 '+this.switchTimeFormat(item.v_endTime)
-      }
       console.log(data);
   
       return data;
@@ -150,8 +136,8 @@ export default {
   },
   mounted() {//创建时获取数据
     console.log(this.$route.params.id);
-    this.axios.post("/teacher/getDetail", {
-      id:this.$route.params.id
+    this.axios.post("/teacher/queryTeacher", {
+      tId:this.$route.params.id
     })
     .then((res) => {
       console.log(res);

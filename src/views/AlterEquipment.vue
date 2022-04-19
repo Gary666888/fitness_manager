@@ -4,7 +4,7 @@
       <!-- 标题 -->
     <div class="title">
       <i class="el-icon-edit"></i>
-      <span>新增场地信息</span>
+      <span>修改器材信息</span>
 
       <!-- 返回按钮 -->
       <div class="back">
@@ -15,13 +15,16 @@
 
     <!-- 表单内容 -->
     <el-form :model="form" class="main" size="medium" status-icon label-width="120px" ref="ruleForm">
-      <el-form-item label="场地名字:" prop="name" :rules="{ required: true, message: '标题不能为空', trigger: ['blur','change']}" >
+      <el-form-item label="器材名称:" prop="name" :rules="{ required: true, message: '标题不能为空', trigger: ['blur','change']}" >
         <el-input v-model="form.name" placeholder="请输入标题"></el-input>
       </el-form-item>
-      <el-form-item label="场地描述:" prop="info" >
-        <el-input v-model="form.info" placeholder="请输入场地描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
+      <el-form-item label="器材数量:" prop="number" :rules="{ required: true, message: '器材数量不能为空', trigger: ['blur','change']}" >
+        <el-input v-model="form.number" placeholder="请输入器材数量"></el-input>
       </el-form-item>
-      <el-form-item label="场地图片:" prop="link">
+      <el-form-item label="器材描述:" prop="info" :rules="{ required: true, message: '内容不能为空', trigger: ['blur','change']}">
+        <el-input v-model="form.info" placeholder="请输入公告内容" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
+      </el-form-item>
+      <el-form-item label="器材图片:" prop="link">
           <el-upload
             name="file"
             class="avatar-uploader"
@@ -31,7 +34,7 @@
             :on-change="handleChange"
             :http-request="uploadFile"
           >
-            <img v-if="this.form.img" :src="this.$store.state.ip+form.img" class="avatar" />
+            <img v-if="form.img" :src="this.$store.state.ip+this.form.img" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
@@ -53,12 +56,13 @@
       return {
         file:{},
         form:{},
+        data:{},
       }
     },
     methods: {
-      //返回房产信息列表
+      //返回
       back(){
-        this.$router.push({path:'/home/place'});
+        this.$router.push({path:'/home/equipment'});
       },
 
       // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
@@ -101,7 +105,6 @@
           console.log(res.data)
           if(res.data.code=='200'){
             this.form.img = res.data.url;
-            console.log(this.form.img);
           }
         })
         .catch(err=>{
@@ -109,26 +112,49 @@
         })
       },
 
+      // 格式化数据
+      formateData(item){
+        var data={};
+        data.img=item.eImg;
+        data.id=item.eId;
+        data.name = item.eName;
+        data.number = item.eNum;
+        data.info = item.eInfo?item.eInfo:'暂无';
+        return data;
+      },
+
       // 提交表单
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log("seccess!",this.form);
-            this.axios.post("/place/addPlace",{
-              pName:this.form.name,
-              pInfo:this.form.info,
-              pImg:this.form.img
+            this.$confirm("此操作会将数据永久性修改，确认是否继续操作?", "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
             })
-            .then(res=>{
-              console.log(res);
-              if(res.data.code=='200'){
-                this.$message.success(res.data.msg);
-                this.$router.push({path:'/home/place'});
-              }
+            .then(()=>{
+              this.axios.post("/equipment/updateEquipment",{
+                eId:this.form.id,
+                eName:this.form.name,
+                eNum:this.form.number,
+                eInfo:this.form.info,
+                eImg:this.form.img,
+              })
+              .then(res=>{
+                console.log(res);
+                if(res.data.code=='200'){
+                  this.$message.success(res.data.msg);
+                  this.$router.push({path:'/home/equipment'});
+                }
+              })
+              .catch(err=>{
+                console.log(err);
+              })
             })
-            .catch(err=>{
-              console.log(err);
+            .catch(()=>{
+              this.$message.info("已取消修改");
             })
+            
           } else {
             console.log('error submit!!');
             return false;
@@ -143,6 +169,18 @@
         this.$refs[formName].resetFields();
       },
 
+    },
+    mounted() {//创建时获取数据
+      this.axios.post('/equipment/queryEquipment',{
+        eId:this.$route.params.id
+      })
+      .then(res=>{
+        console.log(res.data)
+        if(res.data.code=='200'){
+          this.data = res.data.data;
+          this.form=this.formateData(res.data.data)
+        }
+      });
     },
   }
 </script>

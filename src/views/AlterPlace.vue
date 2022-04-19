@@ -18,9 +18,6 @@
       <el-form-item label="场地名称:" prop="name" :rules="{ required: true, message: '标题不能为空', trigger: ['blur','change']}" >
         <el-input v-model="form.name" placeholder="请输入标题"></el-input>
       </el-form-item>
-      <el-form-item label="预约价格:" prop="price" :rules="{ required: true, message: '预约价格不能为空', trigger: ['blur','change']}" >
-        <el-input v-model="form.price" placeholder="请输入预约价格"></el-input>
-      </el-form-item>
       <el-form-item label="场地描述:" prop="info" :rules="{ required: true, message: '内容不能为空', trigger: ['blur','change']}">
         <el-input v-model="form.info" placeholder="请输入公告内容" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
       </el-form-item>
@@ -115,11 +112,10 @@
       // 格式化数据
       formateData(item){
         var data={};
-        data.img=item.p_img;
-        data.id=item.p_id;
-        data.name = item.p_name;
-        data.price = item.p_price;
-        data.info = item.p_info?item.p_info:'暂无';
+        data.img=item.pImg;
+        data.id=item.pId;
+        data.name = item.pName;
+        data.info = item.pInfo?item.pInfo:'暂无';
         return data;
       },
 
@@ -133,13 +129,11 @@
               type: "warning"
             })
             .then(()=>{
-              console.log("seccess!",this.form);
-              this.axios.post("/place/alter",{
-                id:this.form.id,
-                name:this.form.name,
-                info:this.form.info,
-                img:this.form.img,
-                price:this.form.price
+              this.axios.post("/place/updatePlace",{
+                pId:this.form.id,
+                pName:this.form.name,
+                pInfo:this.form.info,
+                pImg:this.form.img,
               })
               .then(res=>{
                 console.log(res);
@@ -165,14 +159,15 @@
       },
 
       // 重置表单
-      resetForm() {
-        this.form=this.formateData(this.data);
+      resetForm(formName) {
+        this.form.img="";
+        this.$refs[formName].resetFields();
       },
 
     },
     mounted() {//创建时获取数据
-      this.axios.post('/place/getDetail',{
-        id:this.$route.params.id
+      this.axios.post('/place/queryPlace',{
+        pId:this.$route.params.id
       })
       .then(res=>{
         console.log(res.data)

@@ -21,7 +21,7 @@
       <div class="btn" style="text-align:right;margin-right:30px">
         <!-- <el-button icon="el-icon-upload" class="btn-exclude" @click="exclude">导出报表</el-button> -->
         <el-button icon="el-icon-plus" class="btn-add" @click="add">新增</el-button>
-        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜素</el-button>
+        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜索</el-button>
       </div>
 
       <!-- 表格数据 -->
@@ -32,15 +32,12 @@
           <el-table-column prop="tel" label="预留手机号"></el-table-column>
           <el-table-column prop="sex" label="性别"></el-table-column>
           <el-table-column prop="age" label="年龄"></el-table-column>
-          <el-table-column prop="rate" label="评分"></el-table-column>
           <!-- 相关操作按钮 -->
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <el-button type="primary" icon="el-icon-search" size="mini" class="btn-show" @click="show(scope.row.id)" title="查看详情"></el-button>
               <el-button type="info" icon="el-icon-edit-outline" size="mini" class="btn-alter" @click="alter(scope.row.id)" title="编辑"></el-button>
               <el-button type="info" icon="el-icon-delete" size="mini" class="btn-lock" @click="del(scope.row.id)" title="删除"></el-button>
-              <el-button type="danger" icon="el-icon-lock" size="mini" class="btn-lock" @click="lock(scope.row.uid,0)" title="解除" v-show="scope.row.lock"></el-button>
-              <el-button type="info" icon="el-icon-unlock" size="mini" class="btn-unlock" @click="lock(scope.row.uid,1)" title="禁用" v-show="!scope.row.lock"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -66,12 +63,12 @@ export default {
   },
   methods: {
     del(id){
-      this.axios.post('/teacher/del',{
-        id:id
+      this.axios.post('/teacher/deleteTeacher',{
+        tId:id
       })
       .then(res=>{
         console.log(res.data);
-        if(res.code=='200'){
+        if(res.data.code=='200'){
           this.load();
         }
       })
@@ -165,15 +162,12 @@ export default {
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.id=list[i].t_id;
-          item.uid=list[i].u_id;
-          item.no=this.PrefixInteger(list[i].t_id,10);
-          item.name = list[i].t_name;
-          item.tel = list[i].u_tel;
-          item.age =  list[i].t_birth?this.GetAge(this.switchTimeFormat(list[i].t_birth)):'待完善';
-          item.sex = list[i].t_sex?'女':'男';
-          item.rate = list[i].t_rate?list[i].t_rate:0;
-          item.lock = list[i].u_lock;
+          item.id=list[i].tid;
+          item.no=this.PrefixInteger(list[i].tid,10);
+          item.name = list[i].tname;
+          item.tel = list[i].ttel;
+          item.age =  list[i].tbirth?this.GetAge(this.switchTimeFormat(list[i].tbirth)):'待完善';
+          item.sex = list[i].tsex?'女':'男';
           arr.push(item);
         }
       }
@@ -185,41 +179,22 @@ export default {
       console.log("获取数据")
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/teacher/getData",{
-        currentPage: this.currentPage,
-        pageSize: this.pageSize,
+      this.axios.post("/teacher/getTeacher",{
+        page: this.currentPage,
+        limit: this.pageSize,
         name: this.search.name,
         tel: this.search.tel
       })
       .then(res => {
         console.log("获取到数据",res.data.data);
-        this.data=this.fomateData(res.data.data.list)
-        this.total = res.data.data.count;
+        this.data=this.fomateData(res.data.data.pageRecode)
+        this.total = res.data.data.totalPage;
         this.loading = false;
       })
       .catch(err => {
         console.log(err);
       });
-    },
-
-    // 禁用和解除
-    lock(id,status){
-      console.log("当前状态",id,status)
-      this.axios.post('/users/lock',{
-        id:id,
-        lock:status
-      })
-      .then(res=>{
-        console.log(res.data);
-        if(res.data.code=='200'){
-          this.load();
-        }
-      })
-      .catch(err=>{
-        console.log(err);
-      })
     }
-
   },
   created(){
     this.load();

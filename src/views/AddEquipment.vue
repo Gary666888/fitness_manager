@@ -4,7 +4,7 @@
       <!-- 标题 -->
     <div class="title">
       <i class="el-icon-edit"></i>
-      <span>新增场地信息</span>
+      <span>新增器材信息</span>
 
       <!-- 返回按钮 -->
       <div class="back">
@@ -15,13 +15,16 @@
 
     <!-- 表单内容 -->
     <el-form :model="form" class="main" size="medium" status-icon label-width="120px" ref="ruleForm">
-      <el-form-item label="场地名字:" prop="name" :rules="{ required: true, message: '标题不能为空', trigger: ['blur','change']}" >
-        <el-input v-model="form.name" placeholder="请输入标题"></el-input>
+      <el-form-item label="器材名字:" prop="name" :rules="{ required: true, message: '器材名不能为空', trigger: ['blur','change']}" >
+        <el-input v-model="form.name" placeholder="请输入器材名称"></el-input>
       </el-form-item>
-      <el-form-item label="场地描述:" prop="info" >
-        <el-input v-model="form.info" placeholder="请输入场地描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
+      <el-form-item label="器材数量:" prop="number" :rules="[{ required: true, message: '器材数量不能为空'}]" >
+        <el-input v-model="form.number" placeholder="请输入器材数量"></el-input>
       </el-form-item>
-      <el-form-item label="场地图片:" prop="link">
+      <el-form-item label="器材描述:" prop="info" >
+        <el-input v-model="form.info" placeholder="请输入器材描述" type="textarea" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
+      </el-form-item>
+      <el-form-item label="器材图片:" prop="link">
           <el-upload
             name="file"
             class="avatar-uploader"
@@ -58,7 +61,7 @@
     methods: {
       //返回房产信息列表
       back(){
-        this.$router.push({path:'/home/place'});
+        this.$router.push({path:'/home/equipment'});
       },
 
       // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
@@ -114,16 +117,17 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             console.log("seccess!",this.form);
-            this.axios.post("/place/addPlace",{
-              pName:this.form.name,
-              pInfo:this.form.info,
-              pImg:this.form.img
+            this.axios.post("/equipment/addEquipment",{
+              eName:this.form.name,
+              eInfo:this.form.info,
+              eImg:this.form.img,
+              eNum:this.form.number  
             })
             .then(res=>{
               console.log(res);
               if(res.data.code=='200'){
                 this.$message.success(res.data.msg);
-                this.$router.push({path:'/home/place'});
+                this.$router.push({path:'/home/equipment'});
               }
             })
             .catch(err=>{
