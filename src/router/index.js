@@ -156,6 +156,22 @@ const routes = [
         }
       },
       {
+        path:'addEquipment',
+        name:'AddEquipment',
+        component:() => import('../views/AddEquipment.vue'),
+        meta: {
+          auth: true
+        }
+      },
+      {
+        path:'alterEquipment/:id',
+        name:'AlterEquipment',
+        component:() => import('../views/AlterEquipment.vue'),
+        meta: {
+          auth: true
+        }
+      },
+      {
         path:'place',
         name:'Place',
         component:() => import('../views/Place.vue'),
