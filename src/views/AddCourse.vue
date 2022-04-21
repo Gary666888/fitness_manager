@@ -37,7 +37,7 @@
 
       <el-form-item label="课程强度:" prop="strong"
       :rules="{ required: true, message: '课程强度不能为空', trigger: ['blur','change']}">
-        <el-select v-model="form.strong" placeholder="请选择会员有效期">
+        <el-select v-model="form.strong" placeholder="请选择课程强度">
           <el-option label="1" value="1"></el-option>
           <el-option label="2" value="2"></el-option>
           <el-option label="3" value="3"></el-option>
@@ -119,7 +119,7 @@
         let form = new FormData();
         // 后端接受参数 ，可以接受多个参数
         form.append("file",this.file)
-
+        form.append("imgType","6")
         // 请求头设置文件上传
         let config = {
             //必须
@@ -128,11 +128,11 @@
           },
         }
         // 发送请求
-        this.axios.post('/teacher/upload',form,config)
+        this.axios.post('/upload',form,config)
         .then(res=>{
           console.log(res.data)
           if(res.data.code=='200'){
-            this.form.img = res.data.url;
+            this.form.img = res.data.data;
           }
         })
         .catch(err=>{
@@ -146,11 +146,11 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             console.log("seccess!",this.form);
-            this.axios.post("/course/add",{
-              name:this.form.name,
-              strong:this.form.strong,
-              info:this.form.info,
-              img:this.form.img,
+            this.axios.post("/course/addCourse",{
+              cName:this.form.name,
+              cStrong:this.form.strong,
+              cInfo:this.form.info,
+              cImg:this.form.img,
             })
             .then(res=>{
               console.log(res);

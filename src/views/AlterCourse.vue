@@ -115,7 +115,7 @@
         let form = new FormData();
         // 后端接受参数 ，可以接受多个参数
         form.append("file",this.file)
-
+        form.append("imgType","6")
         // 请求头设置文件上传
         let config = {
             //必须
@@ -124,11 +124,11 @@
           },
         }
         // 发送请求
-        this.axios.post('/teacher/upload',form,config)
+        this.axios.post('/upload',form,config)
         .then(res=>{
           console.log(res.data)
           if(res.data.code=='200'){
-            this.form.img = res.data.url;
+            this.form.img = res.data.data;
           }
         })
         .catch(err=>{
@@ -144,18 +144,12 @@
       // 格式化数据
       formateData(item){
         var data={};
-        data.id=item.c_id;
-        data.no=this.PrefixInteger(item.c_id,10);
-        data.img = item.c_img?item.c_img:'/img/course.png';
-        data.name = item.c_name;
-        data.strong = item.c_strong;
-        data.info = item.t_info?item.t_info:"";
-        this.value = item.t_rate;
-        if(item.v_state){
-          data.time = this.switchTimeFormat(item.v_startTime)+' 至 '+this.switchTimeFormat(item.v_endTime)
-        }
-        console.log(data);
-    
+        data.id=item.cId;
+        data.no=this.PrefixInteger(item.cId,10);
+        data.img = item.cImg?item.cImg:'/img/course.png';
+        data.name = item.cName;
+        data.strong = item.cStrong;
+        data.info = item.cInfo?item.cInfo:"";
         return data;
       },
 
@@ -170,12 +164,12 @@
             })
             .then(()=>{
               console.log("seccess!",this.form);
-              this.axios.post("/course/alter",{
-                id:this.form.id,
-                name:this.form.name,
-                strong:this.form.strong,
-                info:this.form.info,
-                img:this.form.img,
+              this.axios.post("/course/updateCourse",{
+                cId:this.form.id,
+                cName:this.form.name,
+                cStrong:this.form.strong,
+                cInfo:this.form.info,
+                cImg:this.form.img,
               })
               .then(res=>{
                 console.log(res);
@@ -201,15 +195,16 @@
       },
 
       // 重置表单
-      resetForm() {
-        this.form=this.formateData(this.data);
+      resetForm(formName) {
+        this.form.img="";
+        this.$refs[formName].resetFields();
       },
 
     },
     mounted() {//创建时获取数据
       console.log(this.$route.params.id);
-      this.axios.post("/course/getDetail", {
-        id:this.$route.params.id
+      this.axios.post("/course/queryCourse", {
+        cId:this.$route.params.id
       })
       .then((res) => {
         console.log(res.data);

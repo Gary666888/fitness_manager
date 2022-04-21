@@ -94,9 +94,9 @@
             <el-menu-item-group>
               <el-menu-item index="/home/role">角色档案</el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <!-- <el-menu-item-group>
               <el-menu-item index="/home/notice">公告管理</el-menu-item>
-            </el-menu-item-group>
+            </el-menu-item-group> -->
             <!-- <el-menu-item-group>
               <el-menu-item index="/home/suggest">意见反馈</el-menu-item>
             </el-menu-item-group> -->

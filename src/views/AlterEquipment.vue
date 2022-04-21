@@ -91,7 +91,7 @@
         let form = new FormData();
         // 后端接受参数 ，可以接受多个参数
         form.append("file",this.file)
-
+        form.append("imgType","4")
         // 请求头设置文件上传
         let config = {
             //必须
@@ -100,11 +100,11 @@
           },
         }
         // 发送请求
-        this.axios.post('/teacher/upload',form,config)
+        this.axios.post('/upload',form,config)
         .then(res=>{
           console.log(res.data)
           if(res.data.code=='200'){
-            this.form.img = res.data.url;
+            this.form.img = res.data.data;
           }
         })
         .catch(err=>{

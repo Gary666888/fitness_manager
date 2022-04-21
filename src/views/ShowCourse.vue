@@ -36,7 +36,7 @@
           <el-col :xs="24" :sm="18" :md="9" :lg="9" ><div class="msg">{{data.strong}}</div></el-col>
         </el-row>
         <el-row :gutter="10">
-          <el-col :xs="3" :sm="3" :md="3" :lg="3" ><div class="item-title">个人描述:</div></el-col>
+          <el-col :xs="3" :sm="3" :md="3" :lg="3" ><div class="item-title">描述:</div></el-col>
           <el-col :xs="9" :sm="9" :md="9" :lg="9" ><div class="msg">{{data.info}}</div></el-col>
         </el-row>
       </div>
@@ -67,25 +67,19 @@ export default {
     // 格式化数据
     formateData(item){
       var data={};
-      data.id=item.c_id;
-      data.no=this.PrefixInteger(item.c_id,10);
-      data.img = item.c_img?this.$store.state.ip+item.c_img:'/img/course.png';
-      data.name = item.c_name;
-      data.strong = item.c_strong;
-      data.info = item.t_info?item.t_info:"待完善";
-      this.value = item.t_rate;
-      if(item.v_state){
-        data.time = this.switchTimeFormat(item.v_startTime)+' 至 '+this.switchTimeFormat(item.v_endTime)
-      }
-      console.log(data);
-  
+      data.id=item.cId;
+      data.no=this.PrefixInteger(item.cId,10);
+      data.img = item.cImg?this.$store.state.ip+item.cImg:'/img/course.png';
+      data.name = item.cName;
+      data.strong = item.cStrong;
+      data.info = item.cInfo?item.cInfo:"待完善";
       return data;
     }
   },
   mounted() {//创建时获取数据
     console.log(this.$route.params.id);
-    this.axios.post("/course/getDetail", {
-      id:this.$route.params.id
+    this.axios.post("/course/queryCourse", {
+      cId:this.$route.params.id
     })
     .then((res) => {
       console.log(res);

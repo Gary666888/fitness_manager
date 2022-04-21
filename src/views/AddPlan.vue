@@ -248,7 +248,6 @@
       },
 
       timeChange(){
-        // console.log("change");
         this.form.teacher='';
         this.$refs['teacher'].resetField();
         this.$refs['place'].resetField();
@@ -280,7 +279,6 @@
             item.children.push(child);
           }
           
-          // console.log(week)
           arr.push(item);
         }
         

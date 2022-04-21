@@ -36,7 +36,7 @@
       <div class="btn" style="text-align:right;margin-right:30px">
         <!-- <el-button icon="el-icon-upload" class="btn-exclude" @click="exclude">导出报表</el-button> -->
         <el-button icon="el-icon-plus" class="btn-add" @click="add">新增</el-button>
-        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜素</el-button>
+        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜索</el-button>
       </div>
 
       <!-- 表格数据 -->

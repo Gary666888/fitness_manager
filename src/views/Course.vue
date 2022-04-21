@@ -18,7 +18,7 @@
       <div class="btn" style="text-align:right;margin-right:30px">
         <!-- <el-button icon="el-icon-upload" class="btn-exclude" @click="exclude">导出报表</el-button> -->
         <el-button icon="el-icon-plus" class="btn-add" @click="add">新增</el-button>
-        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜素</el-button>
+        <el-button icon="el-icon-search" class="btn-search" @click="searchMsg">搜索</el-button>
       </div>
 
       <!-- 表格数据 -->
@@ -99,11 +99,11 @@ export default {
       if(list){
         for(var i= 0;i<list.length;i++){
           var item={};
-          item.id=list[i].c_id;
-          item.no=this.PrefixInteger(list[i].c_id,10);
-          item.name = list[i].c_name;
-          item.strong =  list[i].c_strong;
-          item.info = list[i].c_info?list[i].c_info:'待完善';
+          item.id=list[i].cId;
+          item.no=this.PrefixInteger(list[i].cId,10);
+          item.name = list[i].cName;
+          item.strong =  list[i].cStrong;
+          item.info = list[i].cInfo?list[i].cInfo:'待完善';
           item.info = item.info.length<25?item.info:item.info.substring(0,25)+'......'
           arr.push(item);
         }
@@ -115,15 +115,15 @@ export default {
     load(){
       this.loading=true;
       // **************************************获取数据请求*********************************************
-      this.axios.post("/course/getData",{
-        currentPage: this.currentPage,
-        pageSize: this.pageSize,
-        name: this.search.name,
+      this.axios.post("/course/getCourse",{
+        page: this.currentPage,
+        limit: this.pageSize,
+        name: this.search.name
       })
       .then(res => {
         console.log("获取到数据",res.data.data);
-        this.data=this.fomateData(res.data.data.list)
-        this.total = res.data.data.count;
+        this.data=this.fomateData(res.data.data.pageRecode)
+        this.total = res.data.data.totalPage;
         this.loading = false;
       })
       .catch(err => {
@@ -139,8 +139,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.axios.post('/course/del',{
-          id:id
+        this.axios.post('/course/deleteCourse',{
+          cId:id
         })
         .then(res=>{
           if(res.data.code=='200'){
